@@ -48,6 +48,17 @@ app.get('/', function (req, res) {
     });
 });
 
+// get recipe by id
+app.get('/:recipe_id', function (req, res) {
+    console.log('GET request for id: ' + req.params.recipe_id);
+    Recipes.findOne({_id: req.params.recipe_id}, function (err, recipe) {
+        if (err)
+            res.send(err)
+        res.json(recipe);
+
+    });
+});
+
 // post recipe
 app.post('/', function (req, res) {
     console.log('POST' + JSON.stringify(req.body))
