@@ -28,13 +28,13 @@ app.use(bodyParser.json());
 // define model for recipes  =================
 var Recipes = mongoose.model('Recipes', {
     name: {type: String, required: true},
-    description: String,
-    category: String,
-    ingredients: Array,
-    preparation: String,
-    prework_time: Number,
-    preparation_time: Number,
-    image: String
+    description: {type: String, default: ''},
+    category: {type: String, default: ''},
+    ingredients: {type: Array, default: []},
+    preparation: {type: String, default: ''},
+    prework_time: {type: Number, default: ''},
+    preparation_time: {type: Number, default: ''},
+    image: {type: String, default: ''}
 });
 
 // get all recipes
@@ -74,7 +74,30 @@ app.post('/', function (req, res) {
         function (err, recipes) {
             if (err)
                 res.send(err);
-        })
+        });
+    res.send("recipes");
+
+});
+
+// insert or update recipe
+app.put('/:recipe_id', function (req, res) {
+    console.log('PUT ' + JSON.stringify(req.body));
+    console.log('PUT ID ' + req.params.recipe_id);
+    Recipes.update({_id: req.params.recipe_id}, {
+            name: req.body.name,
+            category: req.body.category,
+            description: req.body.description,
+            ingredients: req.body.ingredients,
+            //preparation: req.body.preparation,
+            //prework_time: req.body.prework_time,
+            //preparation_time: req.body.preparation_time,
+            image: req.body.image
+        },
+        {upsert: true},
+        function (err, recipes) {
+            if (err)
+                res.send(err);
+        });
     res.send("recipes");
 
 });
