@@ -29,12 +29,13 @@ app.use(bodyParser.json());
 var Recipes = mongoose.model('Recipes', {
     name: {type: String, required: true},
     description: {type: String, default: ''},
-    category: {type: String, default: ''},
+    category: {type: Array, default: []},
     ingredients: {type: Array, default: []},
     preparation: {type: String, default: ''},
     prework_time: {type: Number, default: ''},
     preparation_time: {type: Number, default: ''},
-    image: {type: String, default: ''}
+    image: {type: String, default: ''},
+    lastchangedate: {type: Date, default: Date.now}
 });
 
 // get all recipes
@@ -69,48 +70,64 @@ app.post('/', function (req, res) {
             preparation: req.body.preparation,
             prework_time: req.body.prework_time,
             preparation_time: req.body.preparation_time,
-            image: req.body.image
+            image: req.body.image,
+            lastchangedate: Date.now()
         },
         function (err, recipes) {
-            if (err)
+            if (err) {
+                console.log('Adding not succeeded');
                 res.send(err);
+            } else {
+                console.log('Recipe added');
+                res.send("Recipe added");
+            }
         });
-    res.send("recipes");
-
 });
 
 // insert or update recipe
 app.put('/:recipe_id', function (req, res) {
     console.log('PUT ' + JSON.stringify(req.body));
-    console.log('PUT ID ' + req.params.recipe_id);
+    //console.log('PUT ID ' + req.params.recipe_id);
     Recipes.update({_id: req.params.recipe_id}, {
             name: req.body.name,
             category: req.body.category,
             description: req.body.description,
             ingredients: req.body.ingredients,
-            //preparation: req.body.preparation,
-            //prework_time: req.body.prework_time,
-            //preparation_time: req.body.preparation_time,
-            image: req.body.image
+            preparation: req.body.preparation,
+            prework_time: req.body.prework_time,
+            preparation_time: req.body.preparation_time,
+            image: req.body.image,
+            lastchangedate: Date.now()
         },
         {upsert: true},
         function (err, recipes) {
-            if (err)
+            if (err) {
+                console.log(err);
                 res.send(err);
+            } else {
+                console.log('Recipe changed');
+                res.send("Recipe changed");
+            }
         });
-    res.send("recipes");
+
 
 });
 
 // delete recipe
 app.delete('/:recipe_id', function (req, res) {
-    console.log('delete api ' + req.params.recipe_id);
+    //console.log('delete api ' + req.params.recipe_id);
     Recipes.remove({
-        _id: req.params.recipe_id
-    }, function (err, recipes) {
-        if (err)
-            res.send(err);
-    });
+            _id: req.params.recipe_id
+        },
+        function (err, recipes) {
+            if (err) {
+                console.log('Deleting recipe not succeeded');
+                res.send(err);
+            } else {
+                console.log('Recipe deleted');
+                res.send("Recipe deleted");
+            }
+        });
 });
 
 
@@ -120,6 +137,6 @@ var server = app.listen(3000, function () {
     var host = server.address().address
     var port = server.address().port
 
-    console.log('Example app listening at http://%s:%s', host, port)
+    console.log('Example app listening at http://%s:%s', host, port);
 
-})
+});
