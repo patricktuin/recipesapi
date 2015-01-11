@@ -84,10 +84,8 @@ app.post('/', function (req, res) {
         });
 });
 
-// insert or update recipe
+// update recipe
 app.put('/:recipe_id', function (req, res) {
-    console.log('PUT ' + JSON.stringify(req.body));
-    //console.log('PUT ID ' + req.params.recipe_id);
     Recipes.update({_id: req.params.recipe_id}, {
             name: req.body.name,
             category: req.body.category,
@@ -103,14 +101,12 @@ app.put('/:recipe_id', function (req, res) {
         function (err, recipes) {
             if (err) {
                 console.log(err);
-                res.send(err);
+                res.send({success: false});
             } else {
-                console.log('Recipe changed');
-                res.send("Recipe changed");
+                console.log('Recipe change succeeded');
+                res.send({success: true});
             }
         });
-
-
 });
 
 // delete recipe
